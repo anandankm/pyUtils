@@ -3,14 +3,16 @@
 __author__="Anandan Rangasmay <andy.compeer@gmail.com>"
 __date__ ="$Apr 25, 2013"
 
-def sentence_itr(self, file_handle):
+import sys
+
+def sentence_itr(file_handle):
     words = []
     for l in file_handle:
         words = l.strip().split()
         if len(words) > 0:
             yield words
 
-def get_file(self, filename, mode='r'):
+def get_file(filename, mode='r'):
     try:
         file_handle = open(filename, mode)
     except IOError as e:
