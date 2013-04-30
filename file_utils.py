@@ -4,6 +4,7 @@ __author__="Anandan Rangasmay <andy.compeer@gmail.com>"
 __date__ ="$Apr 25, 2013"
 
 import sys
+import json
 
 def sentence_itr(file_handle):
     words = []
@@ -24,3 +25,9 @@ def write_output(array, filename):
     file_h = get_file(filename, "w")
     for item in array:
         file_h.write(item + "\n")
+
+""" Write an obj (better to be a list or a dict) represented as json string to a file """
+def write_json(obj, filename):
+    file_h = get_file(filename, "w")
+    json_string = json.dumps(obj)
+    file_h.write(json_string)
