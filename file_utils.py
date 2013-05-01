@@ -44,3 +44,8 @@ def write_output(array, filename):
     for item in array:
         file_h.write(item + "\n")
     file_h.close()
+
+def write_itr(itr, file_handle):
+    for line in itr:
+        file_handle.write(line)
+    file_handle.close()
