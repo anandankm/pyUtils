@@ -4,6 +4,11 @@ __author__="Anandan Rangasmay <andy.compeer@gmail.com>"
 __date__ ="$Apr 25, 2013"
 
 import sys, json, gzip
+from subprocess import Popen,PIPE
+
+def nlines(filename):
+    p1 = Popen(["wc", "-l", filename], stdout=PIPE)
+    return int(p1.communicate()[0].strip().split()[0])
 
 def sentence_itr(file_handle):
     words = []
