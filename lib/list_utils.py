@@ -10,4 +10,4 @@ __date__ ="$May 9, 2013"
 """
 def addlist(lis, sv):
     def addfn(x,y): return int(x) + int(y)
-    return reduce(addfn, line, sv)
+    return reduce(addfn, lis, sv)
