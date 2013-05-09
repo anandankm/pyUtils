@@ -24,6 +24,16 @@ def sentence_itr(file_handle):
         if len(words) > 0:
             yield words
 
+def get_next(file_handle):
+    if file_handle.closed:
+        return []
+    line = file_handle.readline()
+    if line:
+        return line.strip().split()
+    else:
+        file_handle.close()
+        return []
+
 """ Defaults to binary read """
 def get_gzip(filename, mode='rb'):
     try:
