@@ -5,9 +5,16 @@ __date__ ="$Apr 25, 2013"
 
 import sys, json, gzip
 from subprocess import Popen,PIPE
+import shlex
 
 def nlines(filename):
     p1 = Popen(["wc", "-l", filename], stdout=PIPE)
+    return int(p1.communicate()[0].strip().split()[0])
+
+def col_sum(filename, ncol):
+    command = "awk -F'\t' '{s+=$" + str(ncol) + "}END{print s}' " + filename
+    command = shlex.split(command)
+    p1 = Popen(command, stdout=PIPE)
     return int(p1.communicate()[0].strip().split()[0])
 
 def sentence_itr(file_handle):
