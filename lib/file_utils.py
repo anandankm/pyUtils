@@ -3,7 +3,7 @@
 __author__="Anandan Rangasmay <andy.compeer@gmail.com>"
 __date__ ="$Apr 25, 2013"
 
-import sys, json, gzip
+import sys, json, gzip, list_utils
 from subprocess import Popen,PIPE
 import shlex
 
@@ -66,6 +66,13 @@ def write_output(array, filename):
     for item in array:
         file_h.write(item + "\n")
     file_h.close()
+
+def write_dict(dic, filename):
+    file_h = get_file(filename, "w")
+    for line in list_utils.dictlineitr(dic):
+        file_h.write(line + "\n")
+    file_h.close()
+
 
 def write_itr(itr, file_handle):
     for line in itr:
