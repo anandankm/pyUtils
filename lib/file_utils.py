@@ -66,8 +66,11 @@ def write_json_gzip(obj, filename):
   for tail -f.
   Caller needs to take care of closing the file_handle
 """
-def tail_write(array, file_handle):
-    file_handle.write("\t".join(str(x) for x in array))
+def tailwrite(arr, file_handle):
+    if isinstance(arr,list):
+        file_handle.write("\t".join(str(x) for x in array))
+    else:
+        file_handle.write(str(arr))
     file_handle.write("\n")
 
 def write_output(array, filename):
