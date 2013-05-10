@@ -11,3 +11,16 @@ __date__ ="$May 9, 2013"
 def addlist(lis, sv):
     def addfn(x,y): return int(x) + int(y)
     return reduce(addfn, lis, sv)
+
+"""
+  Given a dictionary with values as list type or other primitive
+  type, yield a tab separated line
+"""
+def dictlineitr(dic):
+    for k, v in dic.iteritems():
+        line = str(k) + "\t"
+        if isinstance(v, list):
+            line += "\t".join(str(x) for x in v)
+        else:
+            line += str(v)
+        yield line
