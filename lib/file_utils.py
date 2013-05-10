@@ -68,7 +68,7 @@ def write_json_gzip(obj, filename):
 """
 def tailwrite(arr, file_handle):
     if isinstance(arr,list):
-        file_handle.write("\t".join(str(x) for x in array))
+        file_handle.write("\t".join(str(x) for x in arr))
     else:
         file_handle.write(str(arr))
     file_handle.write("\n")
