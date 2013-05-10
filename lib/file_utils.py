@@ -61,6 +61,15 @@ def write_gzip(big_content, filename):
 def write_json_gzip(obj, filename):
     write_gzip(json.dumps(obj), filename)
 
+"""
+  Write an array tab separated and keep the file_handle open
+  for tail -f.
+  Caller needs to take care of closing the file_handle
+"""
+def tail_write(array, file_handle):
+    file_handle.write("\t".join(str(x) for x in array))
+    file_handle.write("\n")
+
 def write_output(array, filename):
     file_h = get_file(filename, "w")
     for item in array:
