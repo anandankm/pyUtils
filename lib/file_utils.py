@@ -3,7 +3,7 @@
 __author__="Anandan Rangasmay <andy.compeer@gmail.com>"
 __date__ ="$Apr 25, 2013"
 
-import sys, json, gzip, list_utils
+import os, sys, json, gzip, list_utils
 from subprocess import Popen,PIPE
 import shlex
 
@@ -72,6 +72,8 @@ def tailwrite(arr, file_handle):
     else:
         file_handle.write(str(arr))
     file_handle.write("\n")
+    file_handle.flush()
+    os.fsync(file_handle.fileno())
 
 def write_output(array, filename):
     file_h = get_file(filename, "w")
