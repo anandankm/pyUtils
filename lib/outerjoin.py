@@ -5,6 +5,16 @@ __date__ ="$May 3, 2013"
 
 import sys, time
 
+"""
+Outerjoins (Full Outer join) on the first column of the input files.
+Assumptions:
+    1. The first column needs to be an integer.
+    2. Rest of the columns could be strings.
+    3. All the columns are tab separated or white space separated.
+    4. Usage: ./outerjoin.py <output-file> <inputfile> [<inputfiles>]
+    5. Output file columns are tab separated.
+"""
+
 class OuterJoin(object):
     def __init__(self, argsv):
         self.infiles = []
