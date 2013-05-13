@@ -5,6 +5,7 @@ __date__ ="$Apr 25, 2013"
 
 import time, datetime
 import threading, linecache
+import file_utils
 
 
 class readThread(object):
@@ -19,20 +20,20 @@ class readThread(object):
         return self.sharedResource
 
     class fileThread(threading.Thread):
-        def __init__(self, name, fname, start, nlines, shared):
+        def __init__(self, name, fname, s, n, shared):
             threading.Thread.__init__(self)
             self.name = name
             self.fname = fname
-            self.start = start
-            self.nlines = nlines
+            self.s = s
+            self.nlines = n
             self.shared = shared
             self.counter = 0
 
         def getnext(self):
-            line = linecache.getline(self.fname, self.counter + self.start)
+            line = linecache.getline(self.fname, self.counter + self.s)
             if line:
                 words = line.strip().split()
-                shared[words[0]] = words
+                self.shared[words[0]] = words
                 self.counter += 1
 
         def run(self):
@@ -42,18 +43,19 @@ class readThread(object):
 
     def startThreads(self):
         threadname = "Thread-"
-        start = 1
-        nlines = self.totlines/self.thdsperfile
+        s = 1
+        n = self.totlines/self.thdsperfile
         rem = self.totlines%self.thdsperfile
         k = 1
         while k <= self.thdsperfile:
             thrdname = threadname + str(k)
-            start += nlines
             if k == self.thdsperfile:
-                nlines += rem
-            ft = fileThread(thrdname, self.ifile, start, nlines, sharedResource)
-            ft.start()
-            self.thds.append(ft)
+                n += rem
+            thread = self.fileThread(thrdname, self.ifile, s, n, self.sharedResource)
+            print thread, isinstance(thread, threading.Thread)
+            self.thds.append(thread)
+            thread.start()
+            s += n
             k += 1
 
     def joinThreads(self):
