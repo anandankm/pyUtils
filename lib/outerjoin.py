@@ -1,0 +1,101 @@
+#! /opt/python2.7/bin/python
+
+__author__="Anandan Rangasmay <andy.compeer@gmail.com>"
+__date__ ="$May 3, 2013"
+
+import sys, time
+
+class OuterJoin(object):
+    def __init__(self, argsv):
+        self.infiles = []
+        self.infiles_array = []
+        self.infiles_array_len = []
+        arg_len = len(argsv)
+        self.outfile = open(argsv[1], "w")
+        self.irange = range(arg_len - 2)
+        for i in self.irange:
+            self.infiles.append(open(argsv[i+2], "r"))
+            self.infiles_array.append([])
+            self.infiles_array_len.append(1)
+        self.set_allarrays()
+
+    def write_outerjoin(self, itr):
+        for arr in itr:
+            self.outfile.write("\t".join(str(x) for x in arr) + "\n")
+
+    def set_allarrays(self):
+        for i in self.irange:
+            self.set_array(i)
+            self.infiles_array_len[i] = len(self.infiles_array[i])
+
+    def set_array(self, infile_index):
+        self.infiles_array[infile_index] = self.get_next( \
+                self.infiles[infile_index])
+
+    def get_aid_arr(self, aid_arr):
+        for i in self.irange:
+            if len(self.infiles_array[i]) != 0:
+                aid_arr.append(int(self.infiles_array[i][0]))
+        return aid_arr
+
+    def append_count(self, min_aid):
+        for i in self.irange:
+            if (len(self.infiles_array[i]) != 0) and (int(self.infiles_array[i][0]) == min_aid):
+                self.out_arr.extend(self.infiles_array[i][1:self.infiles_array_len[i]])
+                """
+                for j in range(self.infiles_array_len[i] - 1):
+                    self.out_arr.append(self.infiles_array[i][j+1])
+                """
+                self.set_array(i)
+            else:
+                self.out_arr.extend([0] * (self.infiles_array_len[i] - 1))
+                """
+                for j in range(self.infiles_array_len[i] - 1):
+                    self.out_arr.append(0)
+                """
+
+    def all_closed(self):
+        closed = 1
+        for i in self.irange:
+            if (len(self.infiles_array[i]) != 0):
+                closed = 0
+                break
+        return closed
+
+    def get_next(self, file_handle):
+        if file_handle.closed:
+            return []
+        line = file_handle.readline()
+        if line:
+            return line.strip().split()
+        else:
+            file_handle.close()
+            return []
+
+    def get_min(self, arr):
+        if len(arr) <= 0:
+            print "Error: Array length is zero @get_min function"
+            sys.exit(1)
+        minv=arr[0]
+        for it in arr:
+            if it < minv:
+                minv = it
+        return minv
+
+    def do_work(self):
+        while (not self.all_closed()):
+            self.out_arr = []
+            min_aid=self.get_min(self.get_aid_arr([]))
+            self.out_arr.append(min_aid)
+            self.append_count(min_aid)
+            yield self.out_arr
+
+if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        print "Please provide 1 output filename and <1-n> input filenames."
+        print "Eg. ./outerjoin.py <output_file> <input_file_1> .. <input_file_n>."
+        sys.exit(1)
+    start = time.time()
+    outerjoin = OuterJoin(sys.argv)
+    outerjoin.write_outerjoin(outerjoin.do_work())
+    print "Elapsed time:", time.time() - start, "seconds"
