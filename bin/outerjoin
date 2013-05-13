@@ -107,5 +107,6 @@ if __name__ == "__main__":
         sys.exit(1)
     start = time.time()
     outerjoin = OuterJoin(sys.argv)
+    print "Flattening", sys.argv
     outerjoin.write_outerjoin(outerjoin.do_work())
     print "Elapsed time:", time.time() - start, "seconds"
