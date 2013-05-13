@@ -15,6 +15,7 @@ class readThread(object):
         self.totlines = file_utils.nlines(self.ifile)
         self.thds = []
         self.sharedResource = {}
+        self.running = 0
 
     def getSharedResource(self):
         return self.sharedResource
@@ -52,13 +53,17 @@ class readThread(object):
             if k == self.thdsperfile:
                 n += rem
             thread = self.fileThread(thrdname, self.ifile, s, n, self.sharedResource)
-            print thread, isinstance(thread, threading.Thread)
             self.thds.append(thread)
             thread.start()
+            self.running += 1
             s += n
             k += 1
 
     def joinThreads(self):
-        for thd in self.thds:
-            thd.join()
-            print thd.name, "completed."
+        while self.running > 0:
+            for thd in self.thds:
+                if not thd.isAlive():
+                    self.running -= 1
+                    print thd.name, "completed."
+                else:
+                    thd.join(0.25)
