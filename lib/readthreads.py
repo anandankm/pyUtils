@@ -31,6 +31,20 @@ class readThread(object):
     def __init__(self, f):
         self.ifile = f
         self.thdsperfile = 4
-
-    def startThread(self):
         self.totlines = file_utils.nlines(self.ifile)
+        self.thds = {}
+
+    def startThreads(self):
+        threadname = "Thread-"
+        start = 1
+        nlines = self.totlines/self.thdsperfile
+        rem = self.totlines%self.thdsperfile
+        k = 1
+        shared = {}
+        while k <= self.thdsperfile:
+            thrdname = threadname + str(k)
+            if k == self.thdsperfile:
+                nlines += rem
+            ft = fileThread(thrdname, self.ifile, start, nlines, shared)
+            k += 1
+
