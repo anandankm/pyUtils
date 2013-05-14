@@ -6,6 +6,7 @@ __date__ ="$Apr 25, 2013"
 import time, datetime
 import threading, linecache
 import file_utils
+import inspect
 
 
 class readThread(object):
