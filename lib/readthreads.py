@@ -7,6 +7,7 @@ import time, datetime
 import threading, linecache
 import file_utils
 import inspect
+import random
 
 
 class readThread(object):
@@ -86,6 +87,7 @@ class readThread(object):
 
     def startThreads(self):
         for thd in self.thds.keys():
+            time.sleep(random.random())
             thd.start()
             self.isrun += 1
             print "Started", thd.name
