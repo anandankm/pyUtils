@@ -71,7 +71,7 @@ class readThread(object):
             if line:
                 words = line.strip().split()
                 if self.methodattr:
-                   self.methodattr(line)
+                   self.methodattr(words)
                 else:
                     self.shared[words[0]] = words
                 self.counter += 1
