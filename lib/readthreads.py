@@ -9,12 +9,13 @@ import file_utils
 
 
 class readThread(object):
-    def __init__(self, f, nt=4):
+    def __init__(self, f, nt=4, shared, methodattr=""):
         self.ifile = f
         self.thdsperfile = nt
         self.totlines = file_utils.nlines(self.ifile)
         self.thds = {}
-        self.sharedResource = {}
+        self.sharedResource = shared
+        self.methodattr = methodattr
         self.isrun = 0
         self.setThreads()
 
@@ -28,7 +29,8 @@ class readThread(object):
             thrdname = threadname + str(k)
             if k == self.thdsperfile:
                 n += rem
-            thread = self.fileThread(thrdname, self.ifile, s, n, self.sharedResource)
+            thread = self.fileThread(thrdname, self.ifile, s, n,\
+                    self.sharedResource, self.methodattr)
             self.thds[thread] = 1
             s += n
             k += 1
@@ -37,7 +39,7 @@ class readThread(object):
         return self.sharedResource
 
     class fileThread(threading.Thread):
-        def __init__(self, name, fname, s, n, shared):
+        def __init__(self, name, fname, s, n, shared, methodattr=""):
             threading.Thread.__init__(self)
             self.name = name
             self.fname = fname
@@ -51,7 +53,13 @@ class readThread(object):
             line = linecache.getline(self.fname, lineno)
             if line:
                 words = line.strip().split()
-                self.shared[words[0]] = words
+                if self.methodattr:
+                    """ Some reflection magic """
+                    attr = getattr(shared, methodattr)
+                    if callable(attr):
+                        attr(line)
+                else:
+                    self.shared[words[0]] = words
                 self.counter += 1
 
         def run(self):
