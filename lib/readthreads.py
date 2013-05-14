@@ -11,7 +11,7 @@ import random
 
 
 class readThread(object):
-    def __init__(self, f, shared, nt=4, attr=""):
+    def __init__(self, f, shared, nt=4, attr="", info=0):
         self.ifile = f
         self.thdsperfile = nt
         self.totlines = file_utils.nlines(self.ifile)
@@ -19,6 +19,8 @@ class readThread(object):
         self.sharedResource = shared
         self.attr = attr
         self.isrun = 0
+        self.info = info
+        self.infothread = self.threadinfo(self)
         self.checkAttr()
         self.setThreads()
 
@@ -55,6 +57,30 @@ class readThread(object):
     def getSharedResource(self):
         return self.sharedResource
 
+    class threadinfo(threading.Thread):
+        def __init__(self, readT):
+            threading.Thread.__init__(self)
+            self.thds = readT.thds
+            self.readT = readT
+
+        def run(self):
+            self.st = time.time()
+            perc_r = range(6,100,6)
+            len_perc = len(perc_r)
+            i = 0
+            while self.readT.isrun > 0:
+                result_str = ""
+                time.sleep(2.0)
+                result_cnt = 0
+                for thd in self.thds.keys():
+                    result_cnt += thd.counter
+                    perc = "0%"
+                    if thd.counter != 0:
+                        perc = str(100*thd.counter/float(thd.nlines)) + "%"
+                    result_str += str([thd.name, thd.counter, perc])
+                    result_str += ", "
+                print result_str
+
     class fileThread(threading.Thread):
         def __init__(self, name, fname, s, n, shared, methodattr=""):
             threading.Thread.__init__(self)
@@ -87,10 +113,13 @@ class readThread(object):
 
     def startThreads(self):
         for thd in self.thds.keys():
-            time.sleep(random.random())
+            time.sleep(random.random()/float(1000))
             thd.start()
             self.isrun += 1
             print "Started", thd.name
+        if self.info:
+            time.sleep(1.0)
+            self.infothread.start()
 
     def joinThreads(self):
         while self.isrun > 0:
@@ -101,4 +130,7 @@ class readThread(object):
                         self.thds[thd] = 0
                 else:
                     thd.join(0.25)
-        print "All threads completed."
+        if self.info:
+            print "Waiting for 'threadinfo' thread to join"
+            self.infothread.join()
+            print "Info thread joined"
