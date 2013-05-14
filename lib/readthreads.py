@@ -9,15 +9,30 @@ import file_utils
 
 
 class readThread(object):
-    def __init__(self, f, shared, nt=4, methodattr=""):
+    def __init__(self, f, shared, nt=4, attr=""):
         self.ifile = f
         self.thdsperfile = nt
         self.totlines = file_utils.nlines(self.ifile)
         self.thds = {}
         self.sharedResource = shared
-        self.methodattr = methodattr
+        self.attr = attr
         self.isrun = 0
+        self.checkAttr()
         self.setThreads()
+
+    def checkAttr(self):
+        if self.attr:
+            """ Some reflection magic """
+            self.attr = getattr(self.sharedResource, self.attr)
+            if not callable(self.attr):
+                self.attr = ""
+            else:
+                args = inspect.getargspec(self.attr).args
+                if 'self' in args:
+                    args.remove('self')
+                if len(args) != 1:
+                    self.attr = ""
+
 
     def setThreads(self):
         threadname = "Thread-"
@@ -30,7 +45,7 @@ class readThread(object):
             if k == self.thdsperfile:
                 n += rem
             thread = self.fileThread(thrdname, self.ifile, s, n,\
-                    self.sharedResource, self.methodattr)
+                    self.sharedResource, self.attr)
             self.thds[thread] = 1
             s += n
             k += 1
@@ -46,6 +61,7 @@ class readThread(object):
             self.s = s
             self.nlines = n
             self.shared = shared
+            self.methodattr = methodattr
             self.counter = 0
 
         def getnext(self):
@@ -54,10 +70,7 @@ class readThread(object):
             if line:
                 words = line.strip().split()
                 if self.methodattr:
-                    """ Some reflection magic """
-                    attr = getattr(shared, methodattr)
-                    if callable(attr):
-                        attr(line)
+                   self.methodattr(line)
                 else:
                     self.shared[words[0]] = words
                 self.counter += 1
