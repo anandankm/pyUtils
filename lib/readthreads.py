@@ -9,7 +9,7 @@ import file_utils
 
 
 class readThread(object):
-    def __init__(self, f, nt=4, shared, methodattr=""):
+    def __init__(self, f, shared, nt=4, methodattr=""):
         self.ifile = f
         self.thdsperfile = nt
         self.totlines = file_utils.nlines(self.ifile)
