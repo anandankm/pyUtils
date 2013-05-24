@@ -6,11 +6,19 @@ __date__ ="$May 9, 2013"
 """
   Add a list of string numerical values
   @lis - the list to be summed up
-  @sv - the starting value reduces seeds in with 
+  @sv - the starting value reduce seeds in with
 """
 def addlist(lis, sv):
     def addfn(x,y): return int(x) + int(y)
     return reduce(addfn, lis, sv)
+
+"""
+  Add 2 lists of string numerical values
+  @lis1, @lis2 - the lists to be summed up
+"""
+def addlists(lis1, lis2):
+    def addfn(x,y): return int(x) + int(y)
+    return map(addfn, lis1, lis2)
 
 """
   Given a dictionary with values as list type or other primitive
