@@ -17,6 +17,14 @@ def col_sum(filename, ncol):
     p1 = Popen(command, stdout=PIPE)
     return int(p1.communicate()[0].strip().split()[0])
 
+def all_col_sum(filename):
+    cmd = "awk -F'\t' '"
+    cmd += "{for(i=1;i<=NF;i++){s[i]+=$i}}END{str=s[1];for(i=2;i<=NF;i++) "
+    cmd +="{str=str\"\t\"s[i]};print str}' " + filename
+    command = shlex.split(cmd)
+    p1 = Popen(command, stdout=PIPE)
+    return p1.communicate()[0].strip().split()
+
 def sentence_itr(file_handle):
     words = []
     for l in file_handle:
@@ -63,7 +71,8 @@ def write_json_gzip(obj, filename):
 
 """
   Write an array tab separated and keep the file_handle open
-  for tail -f.
+  for tail -f. Works well to look at progress outputs.
+  Pretty slow for writing huge files.
   Caller needs to take care of closing the file_handle
 """
 def tailwrite(arr, file_handle):
