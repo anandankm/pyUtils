@@ -75,6 +75,16 @@ def tailwrite(arr, file_handle):
     file_handle.flush()
     os.fsync(file_handle.fileno())
 
+"""
+  Write a list of lists to a file tab separated.
+"""
+def write_arrarr(arrarr, filename):
+    file_h = get_file(filename, "w")
+    for arr in arrarr:
+        file_h.write("\t".join(str(x) for x in arr) + "\n")
+    file_h.close()
+
+
 def write_output(array, filename):
     file_h = get_file(filename, "w")
     for item in array:
