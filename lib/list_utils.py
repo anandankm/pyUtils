@@ -32,3 +32,13 @@ def dictlineitr(dic):
         else:
             line += str(v)
         yield line
+
+"""
+ Reverse range
+ rev_range(4,0) outputs a generator
+ for 4, 3, 2, 1, 0
+"""
+def rev_range(start, stop, step = 1):
+    while start >= stop:
+        yield start
+        start -= step
